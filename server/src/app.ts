@@ -40,3 +40,6 @@ app.use((_req, res) => {
 
 // Global error handler (must be last middleware)
 app.use(errorHandler);
+
+
+export default app;
