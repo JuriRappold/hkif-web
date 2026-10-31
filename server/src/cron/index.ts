@@ -30,3 +30,12 @@ export function initCronJobs(): void {
 
     cronLogger.info('Weekly schedule generation cron job registered (Monday 00:05).');
 }
+
+export const cronJobs =  async() => {
+    cronLogger.info('Running weekly schedule generation...');
+    try {
+        await generateWeeklySchedules(2);
+    } catch (err) {
+        cronLogger.error('Schedule generation failed:', err);
+    }
+}

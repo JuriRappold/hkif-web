@@ -9,6 +9,7 @@ import scheduleRoutes from "./routes/schedule.routes.js";
 import userRoutes from './routes/user.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import profilesRoutes from './routes/profiles.routes.js';
+import {cronJobs} from "./cron/index.js";
 
 export const app = express();
 
@@ -19,6 +20,19 @@ app.use(express.json());
 // Health check (before routes so it's always reachable)
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.get('/api/cron', async (req, res) => {
+  // Verify request is from Vercel Cron (prevent public abuse)
+  const authHeader = req.headers.authorization;
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // Execute your scheduled tasks
+  await cronJobs();
+
+  res.json({ success: true });
 });
 
 // Routes
